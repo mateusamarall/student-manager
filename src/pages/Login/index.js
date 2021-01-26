@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { isEmail } from 'validator';
 import { useDispatch } from 'react-redux';
+import { get } from 'lodash';
 import * as actions from '../../store/models/auth/actions';
 import { Container } from '../../styles/GlobalStyle';
 import { Form } from './styled';
 
-function Login() {
+function Login(props) {
   const dispatch = useDispatch();
-
+  const prevPath = get(props, 'location.state.prevPath', '/');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -27,7 +28,7 @@ function Login() {
       toast.error('Senha inválida');
     }
 
-    dispatch(actions.loginRequest({ email, password }));
+    dispatch(actions.loginRequest({ email, password, prevPath }));
   }
   return (
     <Container>
