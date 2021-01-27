@@ -22,7 +22,7 @@ function* loginRequest({ payload }) {
   }
 }
 function persistRehydrate({ payload }) {
-  const token = get(payload, 'auth.token');
+  const token = get(payload, 'auth.token', '');
   if (!token) return;
 
   api.defaults.headers.Authorization = `Bearer ${token}`;
