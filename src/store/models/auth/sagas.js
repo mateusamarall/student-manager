@@ -27,7 +27,14 @@ function persistRehydrate({ payload }) {
 
   api.defaults.headers.Authorization = `Bearer ${token}`;
 }
+function registerRequest({ payload }) {
+  const { userId, nome, email, password } = payload;
+
+  console.log(userId, nome, email, password);
+}
+
 export default all([
   takeLatest(types.LOGIN_REQUEST, loginRequest),
   takeLatest(types.PERSIST_REHYDRATE, persistRehydrate),
+  takeLatest(types.REGISTER_REQUEST, registerRequest),
 ]);
