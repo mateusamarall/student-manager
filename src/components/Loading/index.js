@@ -2,6 +2,7 @@ import React from 'react';
 import PropsTypes from 'prop-types';
 import { Container } from './styled';
 
+// eslint-disable-next-line react/prop-types
 function Loading({ isLoading }) {
   if (!isLoading) {
     return <></>;
