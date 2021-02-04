@@ -10,21 +10,21 @@ import { Form } from './styled';
 
 function Register() {
   const dispatch = useDispatch();
-  const userId = useSelector((state) => state.auth.user.id);
+  const id = useSelector((state) => state.auth.user.id);
   const nomeStored = useSelector((state) => state.auth.user.nome);
   const emailStored = useSelector((state) => state.auth.user.email);
-  const isLoading = useSelector((state) => state.auth.user.isLoading);
+  const isLoading = useSelector((state) => state.auth.isLoading);
 
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [password, setpassword] = useState('');
 
   useEffect(() => {
-    if (!userId) return;
+    if (!id) return;
 
     setNome(nomeStored);
     setEmail(emailStored);
-  }, [emailStored, userId, nomeStored]);
+  }, [emailStored, id, nomeStored]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -40,7 +40,7 @@ function Register() {
       toast.error('Email inválido');
     }
 
-    if (!userId && (password.length < 6 || password.length > 50)) {
+    if (!id && (password.length < 6 || password.length > 50)) {
       // eslint-disable-next-line no-unused-vars
       formErrors = true;
       toast.error('Senha deve ter entre 6 e 50 caracteres');
@@ -48,13 +48,13 @@ function Register() {
 
     if (formErrors) return;
 
-    dispatch(actions.registerRequest({ nome, email, password, userId }));
+    dispatch(actions.registerRequest({ nome, email, password, id }));
   }
 
   return (
     <Container>
       <Loading isLoading={isLoading} />
-      <h1>{userId ? 'Editar dados' : 'Crie sua conta'}</h1>
+      <h1>{id ? 'Editar dados' : 'Crie sua conta'}</h1>
 
       <Form onSubmit={handleSubmit}>
         <label htmlFor="nome">
