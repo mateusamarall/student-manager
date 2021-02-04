@@ -26,3 +26,23 @@ export function registerRequest(payload) {
     payload,
   };
 }
+
+export function registerUpdatedSuccess(payload) {
+  return {
+    type: Types.REGISTER_UPDATED_SUCCESS,
+    payload,
+  };
+}
+export function registerCreatedSuccess(payload) {
+  return {
+    type: Types.REGISTER_CREATED_SUCCESS,
+    payload,
+  };
+}
+
+export function registerFailure(payload) {
+  return {
+    type: Types.REGISTER_FAILURE,
+    payload,
+  };
+}
