@@ -4,21 +4,25 @@ import { isEmail, isInt, isFloat } from 'validator';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { FaEdit, FaUserCircle } from 'react-icons/fa';
 import * as actions from '../../store/models/auth/actions';
 import Loading from '../../components/Loading';
 import api from '../../services/axios';
 import history from '../../services/history';
 import { Container } from '../../styles/GlobalStyle';
-import { Form } from './styled';
+import { Form, ProfilePicture, Title } from './styled';
 
 function Aluno({ match }) {
-  const id = get(match, 'params.id', 0);
+  const id = get(match, 'params.id', '');
   const [nome, setNome] = useState('');
   const [sobrenome, setSobrenome] = useState('');
   const [email, setEmail] = useState('');
   const [idade, setIdade] = useState('');
   const [peso, setPeso] = useState('');
   const [altura, setAltura] = useState('');
+  const [foto, setFoto] = useState('');
+
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
@@ -28,7 +32,8 @@ function Aluno({ match }) {
       try {
         setIsLoading(true);
         const { data } = await api.get(`/alunos/${id}`);
-        // const Foto = get(data, 'Fotos[0].url', '');
+        const Foto = get(data, 'Fotos[0].url', '');
+        setFoto(Foto);
         setNome(data.nome);
         setSobrenome(data.sobrenome);
         setEmail(data.email);
@@ -144,7 +149,15 @@ function Aluno({ match }) {
   return (
     <Container>
       <Loading isLoading={isLoading} />
-      <h1>{id ? 'Editar Aluno' : 'Novo Aluno'}</h1>
+      <Title>{id ? 'Editar Aluno' : 'Novo Aluno'}</Title>
+      {id && (
+        <ProfilePicture>
+          {foto ? <img src={foto} alt={nome} /> : <FaUserCircle size={180} />}
+          <Link to={`/fotos/${id}`}>
+            <FaEdit size={24} />
+          </Link>
+        </ProfilePicture>
+      )}
 
       <Form onSubmit={handleSubmit}>
         <input
