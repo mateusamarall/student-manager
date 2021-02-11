@@ -3,6 +3,8 @@ import { get } from 'lodash';
 import { isEmail, isInt, isFloat } from 'validator';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import * as actions from '../../store/models/auth/actions';
 import Loading from '../../components/Loading';
 import api from '../../services/axios';
 import history from '../../services/history';
@@ -18,6 +20,7 @@ function Aluno({ match }) {
   const [peso, setPeso] = useState('');
   const [altura, setAltura] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!id) return;
@@ -25,7 +28,7 @@ function Aluno({ match }) {
       try {
         setIsLoading(true);
         const { data } = await api.get(`/alunos/${id}`);
-        const Foto = get(data, 'Fotos[0].url', '');
+        // const Foto = get(data, 'Fotos[0].url', '');
         setNome(data.nome);
         setSobrenome(data.sobrenome);
         setEmail(data.email);
@@ -48,8 +51,9 @@ function Aluno({ match }) {
     getData();
   }, [id]);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+
     let formErrors = false;
     if (nome.length < 3 || nome.length > 255) {
       toast.error('Nome precisa ter entre 3 e 255 caracteres.');
@@ -90,7 +94,53 @@ function Aluno({ match }) {
       // eslint-disable-next-line no-unused-vars
       formErrors = true;
     }
+
+    if (formErrors) return;
+
+    try {
+      setIsLoading(true);
+      if (id) {
+        // editando
+
+        await api.put(`/alunos/${id}`, {
+          nome,
+          sobrenome,
+          email,
+          idade,
+          peso,
+          altura,
+        });
+        toast.success('Aluno(a) editado(a) com sucesso!');
+      } else {
+        // criando
+
+        const { data } = await api.post(`/alunos/`, {
+          nome,
+          sobrenome,
+          email,
+          idade,
+          peso,
+          altura,
+        });
+        toast.success('Aluno(a) criado(a) com sucesso!');
+        history.push(`/alunos/${data.id}/edit`);
+      }
+      setIsLoading(false);
+    } catch (err) {
+      const status = get(err, 'response.status', 0);
+      const data = get(err, 'response.data', {});
+      const errors = get(data, 'errors', []);
+      if (errors.length > 0) {
+        errors.map((error) => toast.error(error));
+      } else {
+        toast.error('Erro desconhecido');
+      }
+      if (status === 401) {
+        dispatch(actions.loginFailure());
+      }
+    }
   }
+
   return (
     <Container>
       <Loading isLoading={isLoading} />
